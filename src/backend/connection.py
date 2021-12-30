@@ -44,11 +44,11 @@ class DBConnection:
 
 
     # functie utila pt interogari
-    def fetch_data(self,sql_query:str):
+    def fetch_data(self,sql_query:str,ls=None):
         response = None
         try:
             self.cursor=self.connection.cursor()
-            self.cursor.execute(sql_query)
+            self.cursor.execute(sql_query,ls)
             response=self.cursor
 
         except cx_Oracle.Error as err:
@@ -57,13 +57,12 @@ class DBConnection:
         return response
 
     # functie utilizata pt modificari efectuate in baza de date (insert/update/delete)
-    def exec_cmd(self,sql_cmd:str):
+    def exec_cmd(self,sql_cmd:str,ls=None):
         response=False
         try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(sql_cmd)
-                self.connection.commit()
-                response=True
+            self. connection.cursor().execute(sql_cmd,ls)
+            self.connection.commit()
+            response=True
         except cx_Oracle.Error as err:
             self.log_error(err)
         return response
