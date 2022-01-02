@@ -83,11 +83,5 @@ INSERT INTO fisa_inscriere(data_inscriere,id_cursant,id_curs) VALUES (to_date('6
 UPDATE cursuri SET nr_inscrisi=nr_inscrisi+1 WHERE id_curs=2;
 
 
---eliberare locuri curs ( atunci cand se finalizeaza perioada de invatare si se primeste o nota de evaluare a cunostintelor dobandite )
-UPDATE fisa_inscriere SET nota_evaluare=8 WHERE id_cursant=2 AND id_curs=6;
-UPDATE cursuri SET nr_inscrisi=nr_inscrisi-1 WHERE id_curs=6;
-
-UPDATE fisa_inscriere SET nota_evaluare=10 WHERE id_cursant=9 AND id_curs=2;
-UPDATE cursuri SET nr_inscrisi = nr_inscrisi-1 WHERE id_curs=2;
 
 
