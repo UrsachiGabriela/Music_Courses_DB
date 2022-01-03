@@ -12,6 +12,10 @@ class BasePage(tk.Frame):
         self.init_title()
         self.init_buttons()
 
+    @abc.abstractmethod
+    def init(self):
+        pass
+
     def init_title(self):
         title_font=tkfont.Font(family='Helvetica',size=20,weight='bold')
         title_color='dark blue'
@@ -58,13 +62,13 @@ class BasePage(tk.Frame):
             message=text
         )
 
-    def wrong_insert(self):
+    def failure(self,text):
         showinfo(
             title='Information',
-            message='Wrong data inserted!'
+            message=text
         )
 
-    def succes_insert(self,text):
+    def succes(self, text):
         showinfo(
             title='Information',
             message=text

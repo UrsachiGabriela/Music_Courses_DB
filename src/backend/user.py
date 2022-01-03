@@ -52,12 +52,12 @@ class User:
             return False
 
     @staticmethod
-    def add_prof(dbconnection:DBConnection,id_prof:int,nume:str):
+    def add_prof(dbconnection:DBConnection,nume:str):
         add_prof_cmd=f"""
-            INSERT INTO profesori(id_profesor,nume) VALUES (:id_p,:n)
+            INSERT INTO profesori(nume) VALUES (:n)
         """
 
-        exec=dbconnection.exec_cmd(add_prof_cmd,[id_prof,nume])
+        exec=dbconnection.exec_cmd(add_prof_cmd,[nume])
         if exec:
             return True
         else:
@@ -71,70 +71,11 @@ class User:
             return False
 
 
-    @staticmethod
-    def get_learners(dbConnection:DBConnection):
-        cmd=f"""
-            SELECT c.id_cursant,nume,varsta,ocupatie,gen,email
-            FROM cursanti c,detalii_cursanti dc
-            WHERE c.id_cursant=dc.id_cursant
-        """
-
-        response=dbConnection.fetch_data(cmd,[])
-        return response
-
-
-    @staticmethod
-    def search_learner_by_id(dbConnection:DBConnection,id_cursant:int):
-        cmd=f"""
-            SELECT c.id_cursant,nume,varsta,ocupatie,gen,email
-            FROM cursanti c,detalii_cursanti dc
-            WHERE c.id_cursant=dc.id_cursant
-                AND c.id_cursant=:id
-        """
-
-        response=dbConnection.fetch_data(cmd,[id_cursant])
-        return response
 
 
 
-    @staticmethod
-    def get_learning_info(dbConnection:DBConnection):
-        cmd=f"""
-            SELECT cursanti.id_cursant, nume, data_inscriere,taxa_inscriere,cursuri.id_curs,durata,instrument,nota_evaluare
-            FROM cursanti ,fisa_inscriere, cursuri
-            WHERE cursanti.id_cursant=fisa_inscriere.id_cursant
-                AND cursuri.id_curs=fisa_inscriere.id_curs
-            ORDER BY data_inscriere
-        """
-
-        response=dbConnection.fetch_data(cmd,[])
-        return response
-
-    @staticmethod
-    def get_courses_prog(dbConnection:DBConnection):
-        cmd=f"""
-            SELECT cursuri.id_curs,instrument,zi,to_char(ora,'hh24:mi') AS ora,sala
-            FROM cursuri,program
-            WHERE cursuri.id_curs=program.id_curs
-        """
-
-        response=dbConnection.fetch_data(cmd,[])
-        return response
 
 
-    @staticmethod
-    def get_learners_prog(dbConnection:DBConnection):
-        cmd=f"""
-            SELECT cursanti.id_cursant, nume, cursuri.id_curs,zi,to_char(ora,'hh24:mi') AS ora,sala
-            FROM cursanti , cursuri, program,fisa_inscriere
-            WHERE cursuri.id_curs=program.id_curs
-                AND cursuri.id_curs=fisa_inscriere.id_curs
-                AND cursanti.id_cursant=fisa_inscriere.id_cursant
-            ORDER BY cursanti.id_cursant
-        """
-
-        response=dbConnection.fetch_data(cmd,[])
-        return response
 
     @staticmethod
     def get_prof_prog(dbConnection:DBConnection):
@@ -154,3 +95,15 @@ class User:
             return True
         else:
             return False
+
+    @staticmethod
+    def modify_course_duration(dbConnection:DBConnection,id_curs:int,durata:int):
+        return Transaction.modify_course_duration(dbConnection,id_curs,durata)
+
+    @staticmethod
+    def modify_course_reg_fee(dbConnection:DBConnection,id_curs:int,taxa:int):
+        return Transaction.modify_course_reg_fee(dbConnection,id_curs,taxa)
+
+    @staticmethod
+    def modify_prof(dbConnection:DBConnection,id_prof:int,name:str):
+        return Transaction.modify_prof(dbConnection,id_prof,name)

@@ -1,4 +1,12 @@
-- functii pt cautare
-- functii pt modificare (ex: modificare program curs )
-- update email, program , durata curs
 
+
+- thread separat pt end course
+- to_lower la insert
+- format de inserare (ex: ora -> 08:00)
+- regex mail
+
+- cand un prof isi da demisia , va fi inlocuit de altul
+
+- atunci cand adaug un prof nou, nu apare in lista de selectie de la cursuri
+
+- debug search by id la profesori

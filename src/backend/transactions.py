@@ -308,10 +308,67 @@ class Transaction:
         else:
             nr=-1
 
-        if nr==0 and dbConnection.exec_cmd(cmd,[id_curs,durata,id_curs]):
-            return True
+        if nr==0:
+            if dbConnection.exec_cmd(cmd,[id_curs,durata,id_curs]):
+                return True
+            else:
+                return False
         else:
             return False
+
+
+
+
+    @staticmethod
+    def modify_course_reg_fee(dbConnection:DBConnection,id_curs:int,taxa:int):
+        cmd=f"""
+        DECLARE 
+        n_i NUMBER; --nr inscrisi
+        BEGIN
+        
+            SAVEPOINT modificareTaxa;
+            
+                SELECT nr_inscrisi
+                INTO n_i
+                FROM cursuri
+                WHERE id_curs=:id1;
+                
+                
+                UPDATE cursuri
+                SET taxa_inscriere=:t1
+                WHERE id_curs=:i2;
+                
+                IF n_i != 0 THEN
+                    ROLLBACK to modificareTaxa;
+                ELSE
+                    COMMIT;
+                END IF;
+                
+                
+        END;
+        """
+
+
+        verify_cmd=f"""
+        SELECT nr_inscrisi FROM cursuri WHERE id_curs=:id
+        """
+
+        response=dbConnection.fetch_data(verify_cmd,[id_curs])
+        r=[row for row in response]
+        if r:
+            nr=int(r[0][0])
+        else:
+            nr=-1
+
+        if nr==0:
+            if dbConnection.exec_cmd(cmd,[id_curs,taxa,id_curs]):
+                return True
+            else:
+                return False
+        else:
+            return False
+
+
 
 
 
@@ -324,6 +381,20 @@ class Transaction:
         """
 
         if dbConnection.exec_cmd(cmd,[mail,id_cursant]):
+            return True
+        else:
+            return False
+
+
+    @staticmethod
+    def modify_prof(dbConnection:DBConnection,id_prof:int,name:str):
+        cmd=f"""
+        UPDATE profesori
+        SET nume=:n
+        WHERE id_profesor=:id
+        """
+
+        if dbConnection.exec_cmd(cmd,[name,id_prof]):
             return True
         else:
             return False
