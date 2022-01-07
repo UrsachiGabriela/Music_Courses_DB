@@ -241,7 +241,13 @@ class CoursesPage(BasePage):
         if exec:
             self.succes('Course successfully added!')
         else:
-            self.failure('Wrong data inserted. Course cannot be inserted')
+            msg=f'Wrong data inserted !\n' \
+                f'REMEMBER :\n' \
+                f'-durata > 1\n' \
+                f'-max_locuri > 0\n' \
+                f'-taxa_inscriere > 0\n'
+
+            self.failure(msg)
 
 
 
@@ -259,7 +265,13 @@ class CoursesPage(BasePage):
         if exec:
             self.succes('Program was successfully added!')
         else:
-            self.failure('Wrong data inserted. Room/prof busy at this time.')
+            msg=f'Wrong data inserted or room/prof busy at this time!\n' \
+                f'REMEMBER :\n' \
+                f'-zi in (luni,marti,miercuri,joi,vineri)\n' \
+                f'-sala in interval [100,120] or [200,220]\n' \
+                f'-ora -> format 08:00'
+
+            self.failure(msg)
 
     def update_duration(self):
         course_id=self.course_id_update_entry.get().strip()

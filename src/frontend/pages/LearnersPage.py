@@ -3,6 +3,7 @@ from tkinter import ttk
 from src.backend.user import User
 from src.frontend.pages.BasePage import BasePage
 from tkinter.messagebox import showinfo
+import re
 
 from src.frontend.utilities.table import TableFrame
 
@@ -27,7 +28,7 @@ class LearnersPage(BasePage):
 
 
 
-        columns_names=['Learner_ID','Name','Age','Occupation','Gender','Mail','Course_ID','Grade','Reg_fee']
+        columns_names=['Learner_ID','Name','Age','Occupation','Gender','Mail','Course_ID','Reg_date','Grade','Reg_fee']
         self.table = TableFrame(self.viewer_frame, columns_names)
         self.table.grid(row=2, column=0, columnspan=4, sticky="nesw", padx=5, pady=5)
 
@@ -238,9 +239,11 @@ class LearnersPage(BasePage):
 
         occupation=self.learner_occupation_insert_entry.get()
         occupation=occupation.strip()
+        occupation=occupation.lower()
 
         gender=self.learner_gender_insert_entry.get()
         gender=gender.strip()
+        gender=gender.upper()
 
         mail=self.learner_mail_insert_entry.get()
         mail=mail.strip()
@@ -250,6 +253,12 @@ class LearnersPage(BasePage):
         if name ==''  or age =='' or course_id =='':
             self.is_mandatory('Name ,Age and CourseID fields are mandatory!')
             return
+
+
+        is_ok=re.search("^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$",mail)
+
+        if not is_ok:
+            self.failure('Invalid email address')
 
         exec2=None
         exec1=self.controller.add_learner(name,age,occupation,gender,mail)
@@ -270,7 +279,14 @@ class LearnersPage(BasePage):
             else:
                 self.succes('The learner was successfully inserted but registration is impossible. Learner ID is ' + str(r))
         else:
-            self.failure('Wrong data inserted')
+            msg=f'Wrong data inserted or mail already exists !\n' \
+                f'REMEMBER :\n' \
+                f'-nume length must be > 1\n' \
+                f'-varsta must be in interval [14,22]\n' \
+                f'-ocupatie in (elev,student)\n' \
+                f'-gen in (F,M)'
+
+            self.failure(msg)
 
 
     # no new learner , only new registration form
@@ -294,11 +310,16 @@ class LearnersPage(BasePage):
             self.failure('Please select a valid id')
             return
 
+        is_ok=re.search("^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$",mail)
+
+        if not is_ok:
+            self.failure('Invalid email address')
+
         exec=self.controller.update_mail(learner_id,mail)
         if exec:
             self.succes('The mail was successfully updated.')
         else:
-            self.failure('Wrong data inserted')
+            self.failure('Wrong data inserted or mail already exists!')
 
 
 
@@ -348,7 +369,7 @@ class LearnersPage(BasePage):
         name=self.learner_name_search_entry.get().strip()
 
         cmd=f"""
-        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email ,cursuri.id_curs ,nota_evaluare,
+        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email ,cursuri.id_curs,to_char(data_inscriere,'dd-mon-yy') ,nota_evaluare,
                 CASE ocupatie WHEN 'student' THEN taxa_inscriere-0.5*taxa_inscriere
                       WHEN 'elev' THEN taxa_inscriere-0.25*taxa_inscriere
                       ELSE taxa_inscriere
@@ -370,7 +391,7 @@ class LearnersPage(BasePage):
         self.table.clear_table()
         learner_id=self.learner_id_search_entry.get().strip()
         cmd=f"""
-        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email, cursuri.id_curs ,nota_evaluare,
+        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email, cursuri.id_curs ,to_char(data_inscriere,'dd-mon-yy'),nota_evaluare,
                 CASE ocupatie WHEN 'student' THEN taxa_inscriere-0.5*taxa_inscriere
                       WHEN 'elev' THEN taxa_inscriere-0.25*taxa_inscriere
                       ELSE taxa_inscriere
@@ -393,7 +414,7 @@ class LearnersPage(BasePage):
         name=self.learner_name_search_entry.get().strip()
         print(name)
         cmd=f"""
-        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email ,cursuri.id_curs ,nota_evaluare,
+        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email ,cursuri.id_curs,to_char(data_inscriere,'dd-mon-yy') ,nota_evaluare,
                 CASE ocupatie WHEN 'student' THEN taxa_inscriere-0.5*taxa_inscriere
                       WHEN 'elev' THEN taxa_inscriere-0.25*taxa_inscriere
                       ELSE taxa_inscriere
@@ -414,7 +435,7 @@ class LearnersPage(BasePage):
     def populate_the_table_with_all_values(self):
         self.table.clear_table()
         cmd=f"""
-        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email ,cursuri.id_curs ,nota_evaluare,
+        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email ,cursuri.id_curs ,to_char(data_inscriere,'dd-mon-yy'),nota_evaluare,
                 CASE ocupatie WHEN 'student' THEN taxa_inscriere-0.5*taxa_inscriere
                       WHEN 'elev' THEN taxa_inscriere-0.25*taxa_inscriere
                       ELSE taxa_inscriere

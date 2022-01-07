@@ -1,7 +1,11 @@
 import tkinter as tk
+import random
 from tkinter import font as tkfont
 import abc
 from tkinter.messagebox import showinfo
+
+from src.backend.transactions import Transaction
+
 
 class BasePage(tk.Frame):
     def __init__(self,parent,controller):
@@ -24,7 +28,9 @@ class BasePage(tk.Frame):
         title_frame.pack(side=tk.TOP,fill=tk.X)
 
         title_frame.grid_columnconfigure(0,weight=1)
-        tk.Label(master=title_frame,text='MUSIC SCHOOL',font=title_font,fg=title_color,bg=title_frame['bg']).grid(row=0, column=0, sticky='nesw')
+        tk.Label(master=title_frame,text='MUSIC SCHOOL ',font=title_font,fg=title_color,bg=title_frame['bg']).grid(row=0, column=0, sticky='nesw')
+
+        tk.Button(title_frame,text='⟳',font=title_font,fg=title_color,command=Transaction.end_course(self.controller.db_connection,random.randint(4,10))).grid(row=0,column=1, sticky='ew')
 
     def init_buttons(self):
         button_font= tkfont.Font(family='Helvetica', size=14)

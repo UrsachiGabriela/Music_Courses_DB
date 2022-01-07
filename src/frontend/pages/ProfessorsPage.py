@@ -81,7 +81,7 @@ class ProfessorsPage(BasePage):
 
         name_update_frame=tk.LabelFrame(self.update_frame,bg='gray94')
         name_update_frame.grid(row=1, column=0, pady=5, padx=5, sticky='w')
-        tk.Label(name_update_frame, text='Mail: ', bg=name_update_frame['bg'], fg='dark blue',
+        tk.Label(name_update_frame, text='Name: ', bg=name_update_frame['bg'], fg='dark blue',
                  width=width_label).grid(row=0, column=0)
         self.name_update_entry = tk.Entry(name_update_frame)
         self.name_update_entry.grid(row=0, column=1, padx=5, pady=5)

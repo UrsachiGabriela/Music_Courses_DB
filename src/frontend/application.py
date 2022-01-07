@@ -30,6 +30,9 @@ class App(tk.Tk):
         self.show_frame('BasePage')
 
 
+
+
+
     def show_frame(self , name):
         frame=self.frames[name]
         frame.init()
