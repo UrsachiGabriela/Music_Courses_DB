@@ -224,9 +224,9 @@ class ProfessorsPage(BasePage):
     def populate_the_table_with_all_values(self):
         self.table.clear_table()
         cmd=f"""
-            SELECT profesori.id_profesor,nume,id_curs
-            FROM profesori,cursuri
-            WHERE profesori.id_profesor=cursuri.id_profesor(+)
+            SELECT profesori.id_profesor,nume
+            FROM profesori
+            
 
           
         """

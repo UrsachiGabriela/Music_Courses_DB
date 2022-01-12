@@ -261,7 +261,11 @@ class CoursesPage(BasePage):
             self.is_mandatory('All fields are mandatory!')
             return
 
-        exec=self.controller.add_add_prog(course_id,day,hour,room)
+        if int(hour) < 8 or int(hour) >18:
+            self.failure('Invalid hour')
+            return
+
+        exec=self.controller.add_program(course_id,day,hour,room)
         if exec:
             self.succes('Program was successfully added!')
         else:
@@ -269,13 +273,17 @@ class CoursesPage(BasePage):
                 f'REMEMBER :\n' \
                 f'-zi in (luni,marti,miercuri,joi,vineri)\n' \
                 f'-sala in interval [100,120] or [200,220]\n' \
-                f'-ora -> format 08:00'
+                f'-ora -> format : 8 '
 
             self.failure(msg)
 
     def update_duration(self):
         course_id=self.course_id_update_entry.get().strip()
         duration=self.duration_update_entry.get().strip()
+
+        if course_id=='' or duration=='':
+            self.failure('Please insert valid data')
+            return
 
         exec=self.controller.update_course_duration(course_id,duration)
         if exec:
@@ -288,7 +296,11 @@ class CoursesPage(BasePage):
         course_id=self.course_id_update_entry.get().strip()
         reg_fee=self.reg_fee_update_entry.get().strip()
 
-        exec=self.controller.update_course_duration(course_id,reg_fee)
+        if course_id=='' or reg_fee=='':
+            self.failure('Please insert valid data')
+            return
+
+        exec=self.controller.update_course_reg_fee(course_id,reg_fee)
         if exec:
             self.succes('Registration fee successfully updated')
         else:
@@ -312,6 +324,7 @@ class CoursesPage(BasePage):
             self.search_by_instrument_and_id()
 
     def search_by_instrument_and_id(self):
+
         self.table.clear_table()
         course_id=self.course_id_search_entry.get().strip()
         instrument=self.instrument_search_entry.get().strip()
@@ -332,6 +345,7 @@ class CoursesPage(BasePage):
 
 
     def search_by_id(self):
+
         self.table.clear_table()
         course_id=self.course_id_search_entry.get().strip()
 
@@ -351,6 +365,7 @@ class CoursesPage(BasePage):
 
 
     def search_by_instrument(self):
+
         self.table.clear_table()
         instrument=self.instrument_search_entry.get().strip()
 
@@ -369,12 +384,13 @@ class CoursesPage(BasePage):
 
 
     def populate_the_table_with_all_values(self):
+
+
         self.table.clear_table()
         cmd=f"""
-            SELECT cursuri.id_curs,durata,instrument,taxa_inscriere,max_locuri,max_locuri-nr_inscrisi,cursuri.id_profesor,zi,to_char(ora,'hh24:mi') ,sala
-            FROM cursuri,program,profesori
-            WHERE cursuri.id_curs=program.id_curs(+)
-                AND cursuri.id_profesor=profesori.id_profesor
+            SELECT cursuri.id_curs,durata,instrument,taxa_inscriere,max_locuri,max_locuri-nr_inscrisi,cursuri.id_profesor
+            FROM cursuri,profesori
+            WHERE  cursuri.id_profesor=profesori.id_profesor
                 
         """
         response=self.controller.db_connection.fetch_data(cmd,[])

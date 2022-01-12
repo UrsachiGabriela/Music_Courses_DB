@@ -298,7 +298,10 @@ class LearnersPage(BasePage):
         if exec:
             self.succes('The learner was successfully registered.')
         else:
-            self.failure('Wrong data inserted')
+            self.failure('Wrong data inserted  : \n'
+                         ' - this learner is already registered at this course'
+                         '                     OR      \n'
+                         ' - there are no more seats at the selected course')
 
 
     def update(self):
@@ -314,6 +317,7 @@ class LearnersPage(BasePage):
 
         if not is_ok:
             self.failure('Invalid email address')
+            return
 
         exec=self.controller.update_mail(learner_id,mail)
         if exec:
@@ -435,15 +439,9 @@ class LearnersPage(BasePage):
     def populate_the_table_with_all_values(self):
         self.table.clear_table()
         cmd=f"""
-        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email ,cursuri.id_curs ,to_char(data_inscriere,'dd-mon-yy'),nota_evaluare,
-                CASE ocupatie WHEN 'student' THEN taxa_inscriere-0.5*taxa_inscriere
-                      WHEN 'elev' THEN taxa_inscriere-0.25*taxa_inscriere
-                      ELSE taxa_inscriere
-                END
-        FROM cursanti ,fisa_inscriere, cursuri ,detalii_cursanti
-        WHERE cursanti.id_cursant=fisa_inscriere.id_cursant(+)
-            AND cursuri.id_curs(+)=fisa_inscriere.id_curs
-            AND cursanti.id_cursant=detalii_cursanti.id_cursant
+        SELECT cursanti.id_cursant, nume,varsta,ocupatie,gen,email 
+        FROM cursanti ,detalii_cursanti
+        WHERE  cursanti.id_cursant=detalii_cursanti.id_cursant
         ORDER BY cursanti.id_cursant
         """
 

@@ -193,7 +193,12 @@ class Transaction:
                 SAVEPOINT AddProgramCurs;
                     INSERT INTO program VALUES (:zi1,to_date(:ora1,'HH24:MI'),:sala1,:id_curs1);
             
-            
+                    
+                    SELECT profesori.id_profesor 
+                    INTO idp
+                    FROM profesori,cursuri
+                    WHERE profesori.id_profesor=cursuri.id_profesor
+                    AND cursuri.id_curs=:id_curs2;            
             
                     WITH programProf AS  
                         (
@@ -202,20 +207,17 @@ class Transaction:
                             WHERE c.id_profesor=p.id_profesor
                                 AND c.id_curs=prog.id_curs
                         )
-                    
-                    SELECT id_profesor 
-                    INTO idp
-                    FROM profesori,cursuri
-                    WHERE profesori.id_profesor=cursuri.id_profesor
-                    AND cursuri.id_curs=:id_curs2;
-                    
-                    SELECT COUNT(*) 
+
+                   SELECT COUNT(*) 
                     INTO profCount
                     FROM programProf
                     WHERE id_profesor = idp AND zi=:zi3 
                         AND 2 > abs(to_number((to_date(:ora3,'HH24:MI')-to_date(ora,'HH24:MI'))*24));
                         
             
+
+                    
+ 
             
             
                     WITH programSala  AS
@@ -283,7 +285,7 @@ class Transaction:
                 
                 
                 UPDATE cursuri
-                SET durata=:d1
+                SET durata=:durata1
                 WHERE id_curs=:i2;
                 
                 IF n_i != 0 THEN
@@ -305,13 +307,17 @@ class Transaction:
         r=[row for row in response]
         if r:
             nr=int(r[0][0])
+            print(nr)
         else:
             nr=-1
 
         if nr==0:
             if dbConnection.exec_cmd(cmd,[id_curs,durata,id_curs]):
+                print('ok')
                 return True
+
             else:
+                print('not ok')
                 return False
         else:
             return False

@@ -11,7 +11,7 @@
 
 CREATE TABLE cursanti (
     id_cursant NUMBER(10) NOT NULL,
-    nume       VARCHAR2(30) NOT NULL,
+    nume       VARCHAR2(40) NOT NULL,
     varsta     NUMBER(2) NOT NULL,
     ocupatie   VARCHAR2(10)
 );
@@ -34,7 +34,7 @@ CREATE TABLE cursuri (
     durata         NUMBER(2) NOT NULL,
     max_locuri     NUMBER(2) NOT NULL,
     nr_inscrisi    NUMBER(2) NOT NULL,
-    instrument     VARCHAR2(20) NOT NULL,
+    instrument     VARCHAR2(30) NOT NULL,
     taxa_inscriere NUMBER(10) NOT NULL,
     id_profesor    NUMBER(10) NOT NULL
 );
@@ -51,7 +51,7 @@ ALTER TABLE cursuri ADD CONSTRAINT cursuri_pk PRIMARY KEY ( id_curs );
 
 CREATE TABLE detalii_cursanti (
     gen        CHAR(1),
-    email      VARCHAR2(20),
+    email      VARCHAR2(40),
     id_cursant NUMBER(10) NOT NULL
 );
 
@@ -78,7 +78,7 @@ ALTER TABLE fisa_inscriere
 
 CREATE TABLE profesori (
     id_profesor NUMBER(10) NOT NULL,
-    nume        VARCHAR2(30) NOT NULL
+    nume        VARCHAR2(50) NOT NULL
 );
 
 ALTER TABLE profesori
@@ -89,7 +89,7 @@ ALTER TABLE profesori
 ALTER TABLE profesori ADD CONSTRAINT profesori_pk PRIMARY KEY ( id_profesor );
 
 CREATE TABLE program (
-    zi      VARCHAR2(10) NOT NULL,
+    zi      VARCHAR2(20) NOT NULL,
     ora     DATE NOT NULL,
     sala    NUMBER(3) NOT NULL,
     id_curs NUMBER(10) NOT NULL
